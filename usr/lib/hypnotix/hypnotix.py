@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 import gettext
-import gi
 import locale
 import os
-import re
-import setproctitle
 import shutil
-import subprocess
-import warnings
 import sys
 import time
 import traceback
+import warnings
+from functools import partial
+from pathlib import Path
 
 # Force X11 on a Wayland session
 if "WAYLAND_DISPLAY" in os.environ:
@@ -19,19 +17,20 @@ if "WAYLAND_DISPLAY" in os.environ:
 # Suppress GTK deprecation warnings
 warnings.filterwarnings("ignore")
 
+import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version('XApp', '1.0')
 from gi.repository import Gtk, Gdk, Gio, XApp, GdkPixbuf, GLib, Pango
 
-from common import *
-
 import mpv
-
+import requests
+import setproctitle
 from imdb import IMDb
-
-from functools import partial
-
 from unidecode import unidecode
+
+from common import Manager, Provider, BADGES, MOVIES_GROUP, PROVIDERS_PATH, SERIES_GROUP, TV_GROUP,\
+    async_function, idle_function
+
 
 setproctitle.setproctitle("hypnotix")
 
@@ -965,8 +964,18 @@ class MainWindow():
             button.set_relief(Gtk.ReliefStyle.NONE)
             button.connect("clicked", self.on_edit_button_clicked, provider)
             image = Gtk.Image()
-            image.set_from_icon_name("list-edit-symbolic", Gtk.IconSize.BUTTON)
+            image.set_from_icon_name("xapp-edit-symbolic", Gtk.IconSize.BUTTON)
             button.set_tooltip_text(_("Edit"))
+            button.add(image)
+            box.pack_start(button, False, False, 0)
+
+            # Clear icon cache button
+            button = Gtk.Button()
+            button.set_relief(Gtk.ReliefStyle.NONE)
+            button.connect("clicked", self.on_clear_icon_cache_button_clicked, provider)
+            image = Gtk.Image()
+            image.set_from_icon_name("edit-clear-symbolic", Gtk.IconSize.BUTTON)
+            button.set_tooltip_text(_("Clear icon cache"))
             button.add(image)
             box.pack_start(button, False, False, 0)
 
@@ -1016,6 +1025,12 @@ class MainWindow():
     def on_close_info_window(self, widget, event):
         self.info_window.hide()
         return True
+
+    @async_function
+    def on_clear_icon_cache_button_clicked(self, widget, provider: Provider):
+        for channel in provider.channels:
+            if channel.logo_path:
+                Path(channel.logo_path).unlink(missing_ok=True)
 
     def on_delete_button_clicked(self, widget, provider):
         self.navigate_to("delete_page", provider.name)
