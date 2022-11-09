@@ -107,14 +107,17 @@ class Channel():
         if self.name == None and "," in info:
             self.name = info.split(",")[-1].strip()
         if self.logo != None:
-            ext = None
-            for known_ext in [".png", ".jpg", ".gif", ".jpeg"]:
-                if self.logo.lower().endswith(known_ext):
-                    ext = known_ext
-                    break
-            if ext == ".jpeg":
-                ext = ".jpg"
-            self.logo_path = os.path.join(PROVIDERS_PATH, "%s-%s%s" % (slugify(provider.name), slugify(self.name), ext))
+            if self.logo.startswith("file://"):
+                self.logo_path = self.logo[7:]
+            else:
+                ext = None
+                for known_ext in [".png", ".jpg", ".gif", ".jpeg"]:
+                    if self.logo.lower().endswith(known_ext):
+                        ext = known_ext
+                        break
+                if ext == ".jpeg":
+                    ext = ".jpg"
+                self.logo_path = os.path.join(PROVIDERS_PATH, "%s-%s%s" % (slugify(provider.name), slugify(self.name), ext))
 
 class Manager():
 
@@ -161,7 +164,7 @@ class Manager():
                         # Set downloaded size
                         downloaded_bytes = 0
                         # Get total playlist byte size
-                        total_content_size = int(response.headers['content-length'])
+                        total_content_size = int(response.headers.get('content-length', 15))
                         # Set stream blocks
                         block_bytes = int(4*1024*1024)     # 4 MB
 
