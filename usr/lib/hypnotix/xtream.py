@@ -478,7 +478,7 @@ class XTream:
             else:
                 self.update_status(f"{self.name}: Provider refused the connection")
 
-    def _load_from_file(self, filename) -> dict:
+    def _load_from_file(self, filename: str) -> dict:
         """Try to load the dictionary from file
 
         Args:
@@ -512,8 +512,8 @@ class XTream:
                 except Exception as e:
                     print(f" - Could not load from file `{full_filename}`: e=`{e}`")
             return my_data
-        else:
-            return None
+
+        return None
 
     def _save_to_file(self, data_list: dict, filename: str) -> bool:
         """Save a dictionary to file
@@ -525,11 +525,11 @@ class XTream:
             filename (str): Name of the file
 
         Returns:
-            bool: True if successfull, False if error
+            bool: True if successful, False if error
         """
         if data_list is not None:
 
-            #Build the full path
+            # Build the full path
             full_filename = osp.join(self.cache_path, "{}-{}".format(
                     self._slugify(self.name),
                     filename
@@ -544,8 +544,8 @@ class XTream:
                 return False
 
             return True
-        else:
-            return False
+
+        return False
 
     def load_iptv(self):
         """Load XTream IPTV

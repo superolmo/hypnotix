@@ -1639,10 +1639,6 @@ class MainWindow:
     def on_mpv_drawing_area_realize(self, widget):
         self.reinit_mpv()
 
-    # def on_window_realize(self, widget):
-    #     print("on_window_realize")
-    #     self.reload(page="landing_page")
-
     def reinit_mpv(self):
         if self.mpv is not None:
             self.mpv.stop()
