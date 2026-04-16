@@ -35,7 +35,9 @@ jobs:
       dependencies: linuxmint/xapp
 
   test:
-    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event_name != 'issue_comment'
+    runs-on: linuxmint
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
