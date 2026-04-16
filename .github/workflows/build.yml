@@ -33,3 +33,31 @@ jobs:
       issue_number: ${{ github.event.issue.number }}
       ############################## Comma separated list - like 'linuxmint/xapp, linuxmint/cinnamon-desktop'
       dependencies: linuxmint/xapp
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f pytest/requirements.txt ]; then pip install -r pytest/requirements.txt; fi
+
+      - name: Check Syntax with flake8
+        run: |
+          flake8 --extend-ignore=E501 usr/lib/hypnotix/xtream.py
+
+      - name: Run Tests
+        run: |
+          python3 -m pytest --cov=xtream --cov-report=html pytest/test_xtream.py
