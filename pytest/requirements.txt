@@ -1,2 +1,5 @@
 requests==2.31.0 ; python_version >= "3.9"
 typing_extensions==4.10.0 ; python_version < "3.13" and python_version >= "3.9"
+flake8
+pytest
+pytest-cov
