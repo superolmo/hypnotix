@@ -37,7 +37,7 @@ jobs:
   test:
     needs: [build]
     if: github.event_name != 'issue_comment'
-    runs-on: linuxmint
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
@@ -45,12 +45,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: packages
-          path: ./binaries
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -68,4 +62,11 @@ jobs:
 
       - name: Run Tests
         run: |
-          python3 -m pytest --cov=xtream --cov-report=html pytest/test_xtream.py
+          # python3 -m pytest --cov=xtream --cov-report=html pytest/test_xtream.py
+          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src tests/ | tee pytest-coverage.txt
+
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@v1
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt
+          junitxml-path: ./pytest.xml
