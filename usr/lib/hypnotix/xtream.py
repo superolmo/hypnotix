@@ -701,7 +701,7 @@ class XTream:
                                     else:
                                         the_group.series.append(new_series)
                                 else:
-                                    print(f" - Group not found `{stream_channel["name"]}`")
+                                    print(f" - Group not found `{stream_channel['name']}`")
 
                         # Print information of which streams have been skipped
                         if self.hide_adult_content:
