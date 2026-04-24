@@ -241,8 +241,10 @@ class Season:
         self.name = name
         self.episodes = {}
 
+
 class MyStatus(Protocol):
     def __call__(self, string: str, gui_only: bool) -> None: ...
+
 
 class XTream:
 
@@ -277,8 +279,8 @@ class XTream:
     catch_all_group = Group(
         {
             "category_id": "9999",
-            "category_name":"xEverythingElse",
-            "parent_id":0
+            "category_name": "xEverythingElse",
+            "parent_id": 0
         },
         ""
     )
@@ -564,7 +566,7 @@ class XTream:
             if self.state["loaded"] is False:
 
                 for loading_stream_type in (self.live_type, self.vod_type, self.series_type):
-                    ## Get GROUPS
+                    # Get GROUPS
 
                     # Try loading local file
                     dt = 0
@@ -576,7 +578,7 @@ class XTream:
                         # Load all Groups and save file locally
                         start = timer()
                         all_cat = self._load_categories_from_provider(loading_stream_type)
-                        self._save_to_file(all_cat,"all_groups_{}.json".format(
+                        self._save_to_file(all_cat, "all_groups_{}.json".format(
                             loading_stream_type
                         ))
                         dt = timer() - start
@@ -584,7 +586,7 @@ class XTream:
                     # If we got the GROUPS data, show the statistics and load GROUPS
                     if all_cat is not None:
                         self.update_status(f"Loaded {len(all_cat)} {loading_stream_type} Groups in {dt:.3f} seconds")
-                        ## Add GROUPS to dictionaries
+                        # Add GROUPS to dictionaries
 
                         # Add the catch-all-errors group
                         self.groups.append(self.catch_all_group)
@@ -604,7 +606,7 @@ class XTream:
                         print(f" - Could not load {loading_stream_type} Groups")
                         break
 
-                    ## Get Streams
+                    # Get Streams
 
                     # Try loading local file
                     dt = 0
@@ -616,7 +618,7 @@ class XTream:
                         # Load all Streams and save file locally
                         start = timer()
                         all_streams = self._load_streams_from_provider(loading_stream_type)
-                        self._save_to_file(all_streams,"all_stream_{}.json".format(
+                        self._save_to_file(all_streams, "all_stream_{}.json".format(
                             loading_stream_type
                         ))
                         dt = timer() - start
@@ -624,7 +626,7 @@ class XTream:
                     # If we got the STREAMS data, show the statistics and load Streams
                     if all_streams is not None:
                         self.update_status(f"Loaded {len(all_streams)} {loading_stream_type} Streams in {dt:.3f} seconds")
-                        ## Add Streams to dictionaries
+                        # Add Streams to dictionaries
 
                         skipped_adult_content = 0
                         skipped_no_name_content = 0
@@ -652,7 +654,7 @@ class XTream:
                             if not skip_stream:
                                 # Some channels have no group,
                                 # so let's add them to the catch all group
-                                if not stream_channel["category_id"]: 
+                                if not stream_channel["category_id"]:
                                     stream_channel["category_id"] = "9999"
 
                                 # Find the first occurence of the group that the
@@ -740,13 +742,11 @@ class XTream:
         Args:
             get_series (dict): Serie dictionary
         """
-        start = timer()
         series_seasons = self._load_series_info_by_id_from_provider(get_series.series_id)
-        dt = timer() - start
-        # print("Loaded in {:.3f} sec".format(dt))
+
         for series_info in series_seasons["seasons"]:
             season_name = series_info["name"]
-            season_key = series_info["season_number"]
+            # season_key = series_info["season_number"]
             season = Season(season_name)
             get_series.seasons[season_name] = season
             if "episodes" in series_seasons.keys():
@@ -894,7 +894,7 @@ class XTream:
     def allEpg(self):
         return self._get_request(self.get_all_epg_URL())
 
-    ## URL-builder methods
+    # URL-builder methods
     def get_authenticate_URL(self):
         URL = "%s/player_api.php?username=%s&password=%s" % (self.server, self.username, self.password)
         return URL
