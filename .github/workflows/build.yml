@@ -63,7 +63,7 @@ jobs:
       - name: Run Tests
         run: |
           # python3 -m pytest --cov=xtream --cov-report=html pytest/test_xtream.py
-          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src tests/ | tee pytest-coverage.txt
+          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=xtream pytest/test_xtream.py | tee pytest-coverage.txt
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@v1
